@@ -49,4 +49,11 @@ class MailController extends Controller
         }
         return $emails;
     }
+
+    public function getEmail($id){
+        $email =  \App\Models\Mail::findorFail($id);
+        $email->sender;
+        $email->recipient;
+        return $email;
+    }
 }

@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('api')->post('/new-email', [\App\Http\Controllers\MailController::class, 'sendEmail']);
 Route::middleware('api')->get('/get-emails', [\App\Http\Controllers\MailController::class, 'getEmails']);
 Route::middleware('api')->get('/get-recipient-emails/{id}', [\App\Http\Controllers\MailController::class, 'getRecipientEmails']);
+Route::middleware('api')->get('/view-email/{id}', [\App\Http\Controllers\MailController::class, 'getEmail']);
