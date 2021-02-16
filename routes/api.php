@@ -21,3 +21,5 @@ Route::middleware('api')->post('/new-email', [\App\Http\Controllers\MailControll
 Route::middleware('api')->get('/get-emails', [\App\Http\Controllers\MailController::class, 'getEmails']);
 Route::middleware('api')->get('/get-recipient-emails/{id}', [\App\Http\Controllers\MailController::class, 'getRecipientEmails']);
 Route::middleware('api')->get('/view-email/{id}', [\App\Http\Controllers\MailController::class, 'getEmail']);
+Route::middleware('api')->post('/search/{term}', [\App\Http\Controllers\MailController::class, 'search']);
+Route::middleware('api')->get('/recipient-list', [\App\Http\Controllers\MailController::class, 'getAllRecipient']);

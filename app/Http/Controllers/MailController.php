@@ -6,6 +6,7 @@ use App\Mail\Email;
 use App\Models\Recipient;
 use App\Models\Sender;
 use App\Repository\MailRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,6 +16,7 @@ class MailController extends Controller
     public function __construct(MailRepository $mail){
         $this->mail = $mail;
     }
+
     public function sendEmail(Request $request){
         $validate = $request->validate([
             "from"=>"required|email",
@@ -24,19 +26,16 @@ class MailController extends Controller
             "htmlContent"=>"string",
             "file"=>"file"
         ]);
-        $validate['file'] = 'attachments/'. $request->file('file')->getClientOriginalName();
-        $sender = $this->mail->findSender($validate['from']);
-        $recipient = $this->mail->findRecipient($validate['to']);
-        $this->mail->saveMail($validate, $recipient, $sender, $request->file('file'));
-        $send = Mail::to($request->to)->queue(new Email($validate));
+        $file = $request->hasFile('file') ? $request->file('file') : null;
+        $this->mail->sendEmailProcess($validate, $request);
         return response()->json('true');
     }
 
     public function getEmails(){
         $emails = \App\Models\Mail::all();
         foreach ($emails as $email){
-          $recipient =  $email->recipient;
-          $sender = $email->sender;
+          $email->recipient;
+          $email->sender;
         }
         return $emails;
     }
@@ -55,5 +54,18 @@ class MailController extends Controller
         $email->sender;
         $email->recipient;
         return $email;
+    }
+
+    public function search($search){
+        $result = \App\Models\Mail::where('subject', 'like', "%$search%")->orWhereHas('recipient', function (Builder $query) use ($search){
+                $query->where('email', 'like', "%$search%");
+        })->orWhereHas('sender', function (Builder $query) use ($search){
+            $query->where('email', 'like', "%$search%");
+        })->get();
+        return $result;
+    }
+
+    public function getAllRecipient(){
+        return Recipient::all()->lazy();
     }
 }

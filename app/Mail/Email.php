@@ -29,8 +29,11 @@ class Email extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.layout')
-            ->from($this->email['from'])
-            ->attachFromStorage($this->email['file']);
+        $mail =  $this->view('emails.layout')
+            ->from($this->email['from']);
+        if ($this->email['file']){
+            $mail->attachFromStorage($this->email['file']);
+        }
+        return $mail;
     }
 }
